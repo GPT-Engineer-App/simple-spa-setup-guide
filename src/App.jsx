@@ -6,6 +6,8 @@ const Contact = lazy(() => import("./pages/Contact.jsx"));
 const Register = lazy(() => import("./pages/Register.jsx"));
 const Login = lazy(() => import("./pages/Login.jsx"));
 const Profile = lazy(() => import("./pages/Profile.jsx"));
+const Blog = lazy(() => import("./pages/Blog.jsx"));
+const CreateEditPost = lazy(() => import("./pages/CreateEditPost.jsx"));
 import Navbar from "./components/Navbar.jsx";
 
 function App() {
@@ -20,6 +22,9 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/blog" element={<Blog />} />
+          <Route path="/blog/new" element={<CreateEditPost />} />
+          <Route path="/blog/edit/:id" element={<CreateEditPost />} />
         </Routes>
       </Suspense>
     </Router>
