@@ -28,6 +28,24 @@ const fromSupabase = async (query) => {
 | created_at | timestamptz | string | true     |
 | date       | date        | string | true     |
 
+### user
+
+| name       | type        | format | required |
+|------------|-------------|--------|----------|
+| id         | uuid        | string | true     |
+| email      | text        | string | true     |
+| created_at | timestamptz | string | true     |
+
+### blog_post
+
+| name       | type        | format | required |
+|------------|-------------|--------|----------|
+| id         | int8        | number | true     |
+| title      | text        | string | true     |
+| content    | text        | string | true     |
+| created_at | timestamptz | string | true     |
+| user_id    | uuid        | string | true     |
+
 */
 
 // Hooks for event table
@@ -69,6 +87,92 @@ export const useDeleteEvent = () => {
         mutationFn: (id) => fromSupabase(supabase.from('event').delete().eq('id', id)),
         onSuccess: () => {
             queryClient.invalidateQueries('events');
+        },
+    });
+};
+
+// Hooks for user table
+
+export const useUsers = () => useQuery({
+    queryKey: ['users'],
+    queryFn: () => fromSupabase(supabase.from('user').select('*')),
+});
+
+export const useUser = (id) => useQuery({
+    queryKey: ['user', id],
+    queryFn: () => fromSupabase(supabase.from('user').select('*').eq('id', id).single()),
+});
+
+export const useAddUser = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (newUser) => fromSupabase(supabase.from('user').insert([newUser])),
+        onSuccess: () => {
+            queryClient.invalidateQueries('users');
+        },
+    });
+};
+
+export const useUpdateUser = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (updatedUser) => fromSupabase(supabase.from('user').update(updatedUser).eq('id', updatedUser.id)),
+        onSuccess: () => {
+            queryClient.invalidateQueries('users');
+            queryClient.invalidateQueries(['user', updatedUser.id]);
+        },
+    });
+};
+
+export const useDeleteUser = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (id) => fromSupabase(supabase.from('user').delete().eq('id', id)),
+        onSuccess: () => {
+            queryClient.invalidateQueries('users');
+        },
+    });
+};
+
+// Hooks for blog_post table
+
+export const useBlogPosts = () => useQuery({
+    queryKey: ['blog_posts'],
+    queryFn: () => fromSupabase(supabase.from('blog_post').select('*')),
+});
+
+export const useBlogPost = (id) => useQuery({
+    queryKey: ['blog_post', id],
+    queryFn: () => fromSupabase(supabase.from('blog_post').select('*').eq('id', id).single()),
+});
+
+export const useAddBlogPost = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (newBlogPost) => fromSupabase(supabase.from('blog_post').insert([newBlogPost])),
+        onSuccess: () => {
+            queryClient.invalidateQueries('blog_posts');
+        },
+    });
+};
+
+export const useUpdateBlogPost = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (updatedBlogPost) => fromSupabase(supabase.from('blog_post').update(updatedBlogPost).eq('id', updatedBlogPost.id)),
+        onSuccess: () => {
+            queryClient.invalidateQueries('blog_posts');
+            queryClient.invalidateQueries(['blog_post', updatedBlogPost.id]);
+        },
+    });
+};
+
+export const useDeleteBlogPost = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (id) => fromSupabase(supabase.from('blog_post').delete().eq('id', id)),
+        onSuccess: () => {
+            queryClient.invalidateQueries('blog_posts');
         },
     });
 };
