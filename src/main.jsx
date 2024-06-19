@@ -5,6 +5,7 @@ import { ChakraProvider, extendTheme } from "@chakra-ui/react";
 import { Provider } from 'react-redux';
 import { SupabaseAuthProvider } from './integrations/supabase/auth.jsx';
 import store from './store';
+import { SocketProvider } from './integrations/socket';
 
 const colors = {
   brand: {
@@ -21,7 +22,9 @@ ReactDOM.createRoot(document.getElementById("root")).render(
     <Provider store={store}>
       <ChakraProvider theme={theme}>
         <SupabaseAuthProvider>
-          <App />
+          <SocketProvider>
+            <App />
+          </SocketProvider>
         </SupabaseAuthProvider>
       </ChakraProvider>
     </Provider>

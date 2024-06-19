@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useSocket } from '../integrations/socket';
 import { Container, Heading, Button, VStack, Box, Text, HStack, IconButton, Spinner, Alert, AlertIcon } from "@chakra-ui/react";
 import { FaEdit, FaTrash } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
@@ -6,8 +7,33 @@ import { useBlogPosts, useDeleteBlogPost } from "../integrations/supabase/index.
 
 const Blog = () => {
   const navigate = useNavigate();
-  const { data: posts, error, isLoading } = useBlogPosts();
+  const { data: posts, error, isLoading, refetch } = useBlogPosts();
+  const socket = useSocket();
   const deleteBlogPost = useDeleteBlogPost();
+
+  useEffect(() => {
+    if (socket) {
+      socket.on('blogPostUpdated', () => {
+        refetch();
+      });
+
+      socket.on('blogPostDeleted', () => {
+        refetch();
+      });
+
+      socket.on('blogPostCreated', () => {
+        refetch();
+      });
+    }
+
+    return () => {
+      if (socket) {
+        socket.off('blogPostUpdated');
+        socket.off('blogPostDeleted');
+        socket.off('blogPostCreated');
+      }
+    };
+  }, [socket, refetch]);
 
   const handleDelete = (id) => {
     deleteBlogPost.mutate(id);

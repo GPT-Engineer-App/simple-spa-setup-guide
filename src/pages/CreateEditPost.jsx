@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Container, Heading, FormControl, FormLabel, Input, Textarea, Button, useToast, Spinner, Alert, AlertIcon } from "@chakra-ui/react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAddBlogPost, useUpdateBlogPost, useBlogPost } from "../integrations/supabase/index.js";
+import { useSocket } from '../integrations/socket';
 
 const CreateEditPost = () => {
   const { id } = useParams();
@@ -12,8 +13,7 @@ const CreateEditPost = () => {
   const toast = useToast();
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
-
-  
+  const socket = useSocket();
 
   useEffect(() => {
     if (post) {
@@ -34,6 +34,7 @@ const CreateEditPost = () => {
             duration: 5000,
             isClosable: true,
           });
+          socket.emit('blogPostUpdated');
           navigate("/blog");
         },
       });
@@ -47,6 +48,7 @@ const CreateEditPost = () => {
             duration: 5000,
             isClosable: true,
           });
+          socket.emit('blogPostCreated');
           navigate("/blog");
         },
       });

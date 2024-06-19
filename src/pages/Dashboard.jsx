@@ -1,10 +1,28 @@
 import { Container, Heading, VStack, Box } from "@chakra-ui/react";
 import { Bar, Line, Pie } from "react-chartjs-2";
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, PointElement, LineElement, ArcElement } from 'chart.js';
+import { useEffect } from 'react';
+import { useSocket } from '../integrations/socket';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, PointElement, LineElement, ArcElement);
 
 const Dashboard = () => {
+  const socket = useSocket();
+
+  useEffect(() => {
+    if (socket) {
+      socket.on('dashboardDataUpdated', () => {
+        // Handle real-time updates for dashboard data
+      });
+    }
+
+    return () => {
+      if (socket) {
+        socket.off('dashboardDataUpdated');
+      }
+    };
+  }, [socket]);
+
   const barData = {
     labels: ["January", "February", "March", "April", "May", "June"],
     datasets: [
