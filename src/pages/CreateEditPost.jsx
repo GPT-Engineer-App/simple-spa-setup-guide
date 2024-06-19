@@ -37,6 +37,15 @@ const CreateEditPost = () => {
           socket.emit('blogPostUpdated');
           navigate("/blog");
         },
+        onError: (error) => {
+          toast({
+            title: "Error",
+            description: error.message,
+            status: "error",
+            duration: 5000,
+            isClosable: true,
+          });
+        }
       });
     } else {
       addBlogPost.mutate({ title, content }, {
@@ -51,6 +60,15 @@ const CreateEditPost = () => {
           socket.emit('blogPostCreated');
           navigate("/blog");
         },
+        onError: (error) => {
+          toast({
+            title: "Error",
+            description: error.message,
+            status: "error",
+            duration: 5000,
+            isClosable: true,
+          });
+        }
       });
     }
   };
