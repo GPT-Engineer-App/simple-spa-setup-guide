@@ -1,4 +1,4 @@
-import { Container, Heading, VStack, Box } from "@chakra-ui/react";
+import { Container, Heading, VStack, Box, useToast } from "@chakra-ui/react";
 import { Bar, Line, Pie } from "react-chartjs-2";
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, PointElement, LineElement, ArcElement } from 'chart.js';
 import { useEffect } from 'react';
@@ -8,11 +8,18 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend,
 
 const Dashboard = () => {
   const socket = useSocket();
+  const toast = useToast();
 
   useEffect(() => {
     if (socket) {
       socket.on('dashboardDataUpdated', () => {
-        // Handle real-time updates for dashboard data
+        toast({
+          title: "Dashboard Data Updated",
+          description: "The dashboard data has been updated.",
+          status: "info",
+          duration: 5000,
+          isClosable: true,
+        });
       });
     }
 
@@ -21,7 +28,7 @@ const Dashboard = () => {
         socket.off('dashboardDataUpdated');
       }
     };
-  }, [socket]);
+  }, [socket, toast]);
 
   const barData = {
     labels: ["January", "February", "March", "April", "May", "June"],

@@ -8,8 +8,6 @@ const Profile = () => {
   const toast = useToast();
   const navigate = useNavigate();
 
-  
-
   const handleLogout = async () => {
     try {
       await logout();
