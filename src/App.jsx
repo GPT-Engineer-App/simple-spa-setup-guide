@@ -10,6 +10,7 @@ const Blog = lazy(() => import("./pages/Blog.jsx"));
 const CreateEditPost = lazy(() => import("./pages/CreateEditPost.jsx"));
 import Dashboard from "./pages/Dashboard.jsx";
 import Navbar from "./components/Navbar.jsx";
+import ProtectedRoute from "./components/ProtectedRoute.jsx";
 
 function App() {
   return (
@@ -24,9 +25,9 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/blog" element={<Blog />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/blog/new" element={<CreateEditPost />} />
-          <Route path="/blog/edit/:id" element={<CreateEditPost />} />
+          <Route path="/dashboard" element={<ProtectedRoute requiredRole="Admin"><Dashboard /></ProtectedRoute>} />
+          <Route path="/blog/new" element={<ProtectedRoute requiredRole="Editor"><CreateEditPost /></ProtectedRoute>} />
+          <Route path="/blog/edit/:id" element={<ProtectedRoute requiredRole="Editor"><CreateEditPost /></ProtectedRoute>} />
         </Routes>
       </Suspense>
     </Router>

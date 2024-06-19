@@ -18,6 +18,7 @@ export const SupabaseAuthProvider = ({ children }) => {
 
 export const SupabaseAuthProviderInner = ({ children }) => {
   const [session, setSession] = useState(null);
+  const [userRole, setUserRole] = useState(null);
   const [loading, setLoading] = useState(true);
   const queryClient = useQueryClient();
 
@@ -26,6 +27,14 @@ export const SupabaseAuthProviderInner = ({ children }) => {
       setLoading(true);
       const { data: { session } } = await supabase.auth.getSession();
       setSession(session);
+      if (session) {
+        const { data: { user } } = await supabase.auth.getUser();
+        const { data: roles } = await supabase
+          .from('user_roles')
+          .select('role')
+          .eq('user_id', user.id);
+        setUserRole(roles[0]?.role || 'Viewer');
+      }
       setLoading(false);
     };
 
@@ -45,12 +54,13 @@ export const SupabaseAuthProviderInner = ({ children }) => {
   const logout = async () => {
     await supabase.auth.signOut();
     setSession(null);
+    setUserRole(null);
     queryClient.invalidateQueries('user');
     setLoading(false);
   };
 
   return (
-    <SupabaseAuthContext.Provider value={{ session, loading, logout }}>
+    <SupabaseAuthContext.Provider value={{ session, userRole, loading, logout }}>
       {children}
     </SupabaseAuthContext.Provider>
   );
