@@ -1,4 +1,4 @@
-import { Box, Flex, Link, Button } from "@chakra-ui/react";
+import { Box, Flex, Link } from "@chakra-ui/react";
 import { motion } from 'framer-motion';
 import { NavLink, useNavigate } from "react-router-dom";
 import { useAuthState } from "react-firebase-hooks/auth";
@@ -24,6 +24,9 @@ const Navbar = () => {
             </Link>
             <Link as={NavLink} to="/blog" px={2} py={1} rounded="md" _hover={{ textDecoration: 'none', bg: 'teal.600' }} _activeLink={{ bg: 'teal.700' }}>
               Blog
+            </Link>
+            <Link as={NavLink} to="/dashboard" px={2} py={1} rounded="md" _hover={{ textDecoration: 'none', bg: 'teal.600' }} _activeLink={{ bg: 'teal.700' }}>
+              Dashboard
             </Link>
             {user ? (
               <Link as={NavLink} to="/profile" px={2} py={1} rounded="md" _hover={{ textDecoration: 'none', bg: 'teal.600' }} _activeLink={{ bg: 'teal.700' }}>
