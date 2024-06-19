@@ -5,12 +5,11 @@ import { useAddBlogPost, useUpdateBlogPost, useBlogPost } from "../integrations/
 
 const CreateEditPost = () => {
   const { id } = useParams();
+  const { data: post, error, isLoading } = useBlogPost(id);
   const addBlogPost = useAddBlogPost();
   const updateBlogPost = useUpdateBlogPost();
-  const { data: post, error, isLoading } = useBlogPost(id);
   const navigate = useNavigate();
   const toast = useToast();
-  const post = useSelector((state) => state.posts.currentPost);
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
 
