@@ -1,22 +1,30 @@
 import { useState, useEffect } from "react";
-import { Container, Heading, Button, VStack, Box, Text, HStack, IconButton } from "@chakra-ui/react";
+import { Container, Heading, Button, VStack, Box, Text, HStack, IconButton, Spinner, Alert, AlertIcon } from "@chakra-ui/react";
 import { FaEdit, FaTrash } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { fetchPosts, deletePost } from "../store/postsSlice";
+import { useBlogPosts, useDeleteBlogPost } from "../integrations/supabase/index.js";
 
 const Blog = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const posts = useSelector((state) => state.posts.items);
-
-  useEffect(() => {
-    dispatch(fetchPosts());
-  }, [dispatch]);
+  const { data: posts, error, isLoading } = useBlogPosts();
+  const deleteBlogPost = useDeleteBlogPost();
 
   const handleDelete = (id) => {
-    dispatch(deletePost(id));
+    deleteBlogPost.mutate(id);
   };
+
+  if (isLoading) {
+    return <Spinner />;
+  }
+
+  if (error) {
+    return (
+      <Alert status="error">
+        <AlertIcon />
+        {error.message}
+      </Alert>
+    );
+  }
 
   return (
     <Container centerContent maxW="container.md" py={10}>

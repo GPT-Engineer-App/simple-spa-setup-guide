@@ -1,23 +1,20 @@
 import { useState, useEffect } from "react";
-import { Container, Heading, FormControl, FormLabel, Input, Textarea, Button, useToast } from "@chakra-ui/react";
+import { Container, Heading, FormControl, FormLabel, Input, Textarea, Button, useToast, Spinner, Alert, AlertIcon } from "@chakra-ui/react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { createPost, updatePost, fetchPostById } from "../store/postsSlice";
+import { useAddBlogPost, useUpdateBlogPost, useBlogPost } from "../integrations/supabase/index.js";
 
 const CreateEditPost = () => {
   const { id } = useParams();
-  const dispatch = useDispatch();
+  const addBlogPost = useAddBlogPost();
+  const updateBlogPost = useUpdateBlogPost();
+  const { data: post, error, isLoading } = useBlogPost(id);
   const navigate = useNavigate();
   const toast = useToast();
   const post = useSelector((state) => state.posts.currentPost);
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
 
-  useEffect(() => {
-    if (id) {
-      dispatch(fetchPostById(id));
-    }
-  }, [dispatch, id]);
+  
 
   useEffect(() => {
     if (post) {
@@ -29,26 +26,46 @@ const CreateEditPost = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (id) {
-      dispatch(updatePost({ id, title, content }));
-      toast({
-        title: "Post updated.",
-        description: "Your post has been updated successfully.",
-        status: "success",
-        duration: 5000,
-        isClosable: true,
+      updateBlogPost.mutate({ id, title, content }, {
+        onSuccess: () => {
+          toast({
+            title: "Post updated.",
+            description: "Your post has been updated successfully.",
+            status: "success",
+            duration: 5000,
+            isClosable: true,
+          });
+          navigate("/blog");
+        },
       });
     } else {
-      dispatch(createPost({ title, content }));
-      toast({
-        title: "Post created.",
-        description: "Your post has been created successfully.",
-        status: "success",
-        duration: 5000,
-        isClosable: true,
+      addBlogPost.mutate({ title, content }, {
+        onSuccess: () => {
+          toast({
+            title: "Post created.",
+            description: "Your post has been created successfully.",
+            status: "success",
+            duration: 5000,
+            isClosable: true,
+          });
+          navigate("/blog");
+        },
       });
     }
-    navigate("/blog");
   };
+
+  if (isLoading) {
+    return <Spinner />;
+  }
+
+  if (error) {
+    return (
+      <Alert status="error">
+        <AlertIcon />
+        {error.message}
+      </Alert>
+    );
+  }
 
   return (
     <Container centerContent maxW="container.md" py={10}>
